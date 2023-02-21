@@ -35,6 +35,11 @@ if test "false" = "$(git config --bool --get gerrit.createChangeId)" ; then
   exit 0
 fi
 
+# Do not edit change id if commit message is empty
+if test "$(sed -e '/>8/q' < "$1" | git stripspace --strip-comments | wc -l)" -eq 0 ; then
+  exit 1
+fi
+
 if git rev-parse --verify HEAD >/dev/null 2>&1; then
   refhash="$(git rev-parse HEAD)"
 else
